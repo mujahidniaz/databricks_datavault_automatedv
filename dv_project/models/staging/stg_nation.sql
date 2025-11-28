@@ -1,7 +1,8 @@
 {{- config(
-    materialized='view',
+    materialized='incremental',
     schema='staging',
-    tags=['staging']
+    tags=['staging', 'psa'],
+    unique_key='NATION_PK'
 ) -}}
 
 {%- set yaml_metadata -%}
