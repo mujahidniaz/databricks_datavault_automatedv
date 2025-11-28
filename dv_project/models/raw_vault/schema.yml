@@ -1,0 +1,132 @@
+version: 2
+
+models:
+  # Hubs
+  - name: hub_customer
+    description: Customer hub containing unique customer business keys
+    columns:
+      - name: CUSTOMER_PK
+        description: Customer primary key hash
+        tests:
+          - not_null
+          - unique
+      - name: C_CUSTKEY
+        description: Customer business key
+        tests:
+          - not_null
+          
+  - name: hub_order
+    description: Order hub containing unique order business keys
+    columns:
+      - name: ORDER_PK
+        description: Order primary key hash
+        tests:
+          - not_null
+          - unique
+          
+  - name: hub_part
+    description: Part hub containing unique part business keys
+    columns:
+      - name: PART_PK
+        description: Part primary key hash
+        tests:
+          - not_null
+          - unique
+          
+  - name: hub_supplier
+    description: Supplier hub containing unique supplier business keys
+    columns:
+      - name: SUPPLIER_PK
+        description: Supplier primary key hash
+        tests:
+          - not_null
+          - unique
+          
+  - name: hub_nation
+    description: Nation hub containing unique nation business keys
+    columns:
+      - name: NATION_PK
+        description: Nation primary key hash
+        tests:
+          - not_null
+          - unique
+          
+  - name: hub_region
+    description: Region hub containing unique region business keys
+    columns:
+      - name: REGION_PK
+        description: Region primary key hash
+        tests:
+          - not_null
+          - unique
+          
+  # Links
+  - name: link_customer_order
+    description: Link between customers and orders
+    columns:
+      - name: CUSTOMER_ORDER_FK
+        description: Customer-Order link hash key
+        tests:
+          - not_null
+          - unique
+      - name: CUSTOMER_PK
+        description: Customer foreign key
+        tests:
+          - not_null
+      - name: ORDER_PK
+        description: Order foreign key
+        tests:
+          - not_null
+          
+  - name: link_order_lineitem
+    description: Link between orders and line items
+    
+  - name: link_order_part_supplier
+    description: Link between orders, parts, and suppliers
+    
+  - name: link_part_supplier
+    description: Link between parts and suppliers
+    
+  - name: link_customer_nation
+    description: Link between customers and nations
+    
+  - name: link_supplier_nation
+    description: Link between suppliers and nations
+    
+  - name: link_nation_region
+    description: Link between nations and regions
+    
+  # Satellites
+  - name: sat_customer
+    description: Customer satellite containing descriptive attributes
+    columns:
+      - name: CUSTOMER_PK
+        description: Customer primary key hash
+        tests:
+          - not_null
+      - name: CUSTOMER_HASHDIFF
+        description: Hash diff for change detection
+        tests:
+          - not_null
+          
+  - name: sat_order
+    description: Order satellite containing descriptive attributes
+    
+  - name: sat_lineitem
+    description: Line item satellite containing descriptive attributes
+    
+  - name: sat_part
+    description: Part satellite containing descriptive attributes
+    
+  - name: sat_supplier
+    description: Supplier satellite containing descriptive attributes
+    
+  - name: sat_partsupp
+    description: Part-Supplier satellite containing descriptive attributes
+    
+  - name: sat_nation
+    description: Nation satellite containing descriptive attributes
+    
+  - name: sat_region
+    description: Region satellite containing descriptive attributes
+

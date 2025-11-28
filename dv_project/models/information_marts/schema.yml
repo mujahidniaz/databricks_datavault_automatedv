@@ -1,0 +1,110 @@
+version: 2
+
+models:
+  # Dimensions
+  - name: dim_customer
+    description: Customer dimension with nation and region information
+    columns:
+      - name: customer_key
+        description: Customer surrogate key
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: Customer business key
+        tests:
+          - not_null
+          
+  - name: dim_supplier
+    description: Supplier dimension with nation and region information
+    columns:
+      - name: supplier_key
+        description: Supplier surrogate key
+        tests:
+          - not_null
+          - unique
+      - name: supplier_id
+        description: Supplier business key
+        tests:
+          - not_null
+          
+  - name: dim_part
+    description: Part dimension with product information
+    columns:
+      - name: part_key
+        description: Part surrogate key
+        tests:
+          - not_null
+          - unique
+      - name: part_id
+        description: Part business key
+        tests:
+          - not_null
+          
+  - name: dim_date
+    description: Date dimension for time-based analysis
+    columns:
+      - name: date_day
+        description: Date value
+        tests:
+          - not_null
+          - unique
+          
+  # Facts
+  - name: fact_orders
+    description: Orders fact table with customer dimension
+    columns:
+      - name: order_key
+        description: Order surrogate key
+        tests:
+          - not_null
+      - name: order_id
+        description: Order business key
+        tests:
+          - not_null
+      - name: total_price
+        description: Total order price
+        tests:
+          - not_null
+          
+  - name: fact_lineitem
+    description: Line item fact table with all dimensions
+    columns:
+      - name: lineitem_key
+        description: Line item surrogate key
+        tests:
+          - not_null
+      - name: quantity
+        description: Quantity ordered
+        tests:
+          - not_null
+      - name: extended_price
+        description: Extended price
+        tests:
+          - not_null
+          
+  # Marts
+  - name: mart_sales_summary
+    description: Sales summary aggregated by customer and date
+    columns:
+      - name: customer_id
+        description: Customer identifier
+        tests:
+          - not_null
+      - name: total_revenue
+        description: Total revenue
+        tests:
+          - not_null
+          
+  - name: mart_supplier_performance
+    description: Supplier performance metrics
+    columns:
+      - name: supplier_id
+        description: Supplier identifier
+        tests:
+          - not_null
+      - name: total_revenue
+        description: Total revenue from supplier
+        tests:
+          - not_null
+

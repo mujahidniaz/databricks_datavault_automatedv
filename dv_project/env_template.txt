@@ -1,0 +1,15 @@
+# Databricks Connection Configuration
+# Copy this file to .env and fill in your values
+
+# Your Databricks workspace URL (without https://)
+# Example: my-workspace.cloud.databricks.com
+DBT_DATABRICKS_HOST=your-databricks-host.cloud.databricks.com
+
+# HTTP Path from your SQL Warehouse connection details
+# Example: /sql/1.0/warehouses/abc123def456
+DBT_DATABRICKS_HTTP_PATH=/sql/1.0/warehouses/your-warehouse-id
+
+# Your Databricks Personal Access Token
+# Generate from: User Settings -> Access Tokens -> Generate New Token
+DBT_DATABRICKS_TOKEN=your-databricks-token-here
+

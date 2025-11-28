@@ -1,0 +1,21 @@
+# Python
+*.pyc
+__pycache__/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# dbt
+dv_project/target/
+dv_project/dbt_packages/
+dv_project/logs/
+dv_project/.env
+*.log
+
+# OS
+.DS_Store
+.vscode/
+.idea/
+
+# Databricks
+.databricks/
