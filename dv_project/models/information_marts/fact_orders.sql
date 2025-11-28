@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='information_marts',
-    tags=['fact', 'orders'],
+    schema='gold_information_marts',
+    tags=['gold', 'fact', 'orders'],
     post_hook=[
         "ALTER TABLE {{ this }} ALTER COLUMN order_key SET NOT NULL",
         "ALTER TABLE {{ this }} ADD CONSTRAINT pk_fact_orders PRIMARY KEY(order_key)",

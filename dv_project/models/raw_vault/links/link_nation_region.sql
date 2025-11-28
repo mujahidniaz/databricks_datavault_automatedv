@@ -1,7 +1,7 @@
 {{- config(
     materialized='incremental',
-    schema='raw_vault',
-    tags=['link', 'nation', 'region']
+    schema='silver_raw_vault',
+    tags=['silver', 'link', 'nation', 'region']
 ) -}}
 
 {%- set source_model = "stg_nation" -%}

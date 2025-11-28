@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='business_vault',
-    tags=['business_vault', 'supplier']
+    schema='silver_business_vault',
+    tags=['silver', 'business_vault', 'supplier']
 ) -}}
 
 -- Supplier details with nation and region information

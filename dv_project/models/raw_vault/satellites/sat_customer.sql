@@ -1,7 +1,7 @@
 {{- config(
     materialized='incremental',
-    schema='raw_vault',
-    tags=['satellite', 'customer']
+    schema='silver_raw_vault',
+    tags=['silver', 'satellite', 'customer']
 ) -}}
 
 {%- set source_model = "stg_customer" -%}

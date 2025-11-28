@@ -1,7 +1,7 @@
 {{- config(
     materialized='incremental',
-    schema='staging',
-    tags=['staging', 'psa'],
+    schema='bronze_psa',
+    tags=['bronze', 'psa', 'nation'],
     unique_key='NATION_PK'
 ) -}}
 

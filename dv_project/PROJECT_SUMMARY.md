@@ -22,7 +22,7 @@ dv_project/
     │
     ├── sources.yml                    # Source table definitions (TPC-H)
     │
-    ├── staging/                       # 🔷 STAGING LAYER
+    ├── staging/                       # 🥉 BRONZE LAYER - PSA
     │   ├── schema.yml                # Staging models documentation & tests
     │   ├── stg_customer.sql          # Staged customer with hashes
     │   ├── stg_orders.sql            # Staged orders with hashes
@@ -33,7 +33,7 @@ dv_project/
     │   ├── stg_nation.sql            # Staged nations with hashes
     │   └── stg_region.sql            # Staged regions with hashes
     │
-    ├── raw_vault/                     # 🔷 RAW VAULT LAYER
+    ├── raw_vault/                     # 🥈 SILVER LAYER - RAW VAULT
     │   ├── schema.yml                # Raw vault documentation & tests
     │   │
     │   ├── hubs/                     # Hub tables (6 hubs)
@@ -63,12 +63,12 @@ dv_project/
     │       ├── sat_nation.sql
     │       └── sat_region.sql
     │
-    ├── business_vault/                # 🔷 BUSINESS VAULT LAYER
+    ├── business_vault/                # 🥈 SILVER LAYER - BUSINESS VAULT
     │   ├── bv_customer_details.sql   # Customer with geography
     │   ├── bv_order_details.sql      # Orders with customer info
     │   └── bv_supplier_details.sql   # Supplier with geography
     │
-    └── information_marts/             # 🔷 INFORMATION MARTS LAYER
+    └── information_marts/             # 🥇 GOLD LAYER - INFORMATION MARTS
         ├── schema.yml                # Mart documentation & tests
         ├── dim_customer.sql          # Customer dimension
         ├── dim_supplier.sql          # Supplier dimension
@@ -82,33 +82,37 @@ dv_project/
 
 ## 📊 Data Model Overview
 
-### Architecture Layers
+### Medallion Architecture Layers
 
-#### 1️⃣ Staging Layer (8 models)
-- Materialized as **views**
+#### 🥉 Bronze Layer - PSA (8 models)
+- Materialized as **incremental tables** (persistent storage)
 - Generates hash keys (MD5) for Data Vault
 - Adds metadata (LOAD_DATE, RECORD_SOURCE, EFFECTIVE_FROM)
-- No persistence, computed on-the-fly
+- Append-only architecture for reprocessing
+- Schema: `bronze_psa.*`
 
-#### 2️⃣ Raw Vault Layer (21 models)
+#### 🥈 Silver Layer - Raw Vault (21 models)
 - **6 Hubs**: Store unique business keys
 - **7 Links**: Store relationships between entities
 - **8 Satellites**: Store descriptive attributes and history
 - Materialized as **incremental tables** (insert-only)
 - Full audit trail and historization
+- Schema: `silver_raw_vault.*`
 
-#### 3️⃣ Business Vault Layer (3 models)
+#### 🥈 Silver Layer - Business Vault (3 models)
 - Denormalized views of Raw Vault
 - Joins Hubs, Links, and Satellites
-- Business-friendly layer
+- Business-friendly layer with business logic
 - Materialized as **tables**
+- Schema: `silver_business_vault.*`
 
-#### 4️⃣ Information Marts Layer (8 models)
+#### 🥇 Gold Layer - Information Marts (8 models)
 - **4 Dimensions**: Customer, Supplier, Part, Date
 - **2 Facts**: Orders, Line Items
 - **2 Marts**: Sales Summary, Supplier Performance
 - Materialized as **tables**
 - Ready for BI tools (Tableau, Power BI, etc.)
+- Schema: `gold_information_marts.*`
 
 ## 🎯 Key Features
 
@@ -141,20 +145,20 @@ dv_project/
 
 ## 🔧 Configuration
 
-### Catalogs & Schemas
+### Catalogs & Schemas (Medallion Architecture)
 - **Source**: `samples.tpch` (Databricks sample data)
 - **Target Catalog**: `mujahid_data_vault_demo`
 - **Schemas**:
-  - `staging` - Staged data
-  - `raw_vault` - Core Data Vault
-  - `business_vault` - Business views
-  - `information_marts` - Analytics layer
+  - 🥉 `bronze_psa` - Persistent Staging Area
+  - 🥈 `silver_raw_vault` - Core Data Vault
+  - 🥈 `silver_business_vault` - Business views
+  - 🥇 `gold_information_marts` - Analytics layer
 
 ### Materialization Strategy
-- **Staging**: View (no storage)
-- **Raw Vault**: Incremental (append-only)
-- **Business Vault**: Table (full refresh)
-- **Information Marts**: Table (full refresh)
+- **Bronze PSA**: Incremental (append-only persistent)
+- **Silver Raw Vault**: Incremental (append-only)
+- **Silver Business Vault**: Table (full refresh)
+- **Gold Information Marts**: Table (full refresh)
 
 ### Hash Algorithm
 - Default: MD5
@@ -207,14 +211,14 @@ All included in `sample_queries.sql`:
 
 | Layer | Type | Count |
 |-------|------|-------|
-| Staging | Views | 8 |
-| Raw Vault - Hubs | Incremental Tables | 6 |
-| Raw Vault - Links | Incremental Tables | 7 |
-| Raw Vault - Satellites | Incremental Tables | 8 |
-| Business Vault | Tables | 3 |
-| Information Marts - Dimensions | Tables | 4 |
-| Information Marts - Facts | Tables | 2 |
-| Information Marts - Aggregates | Tables | 2 |
+| 🥉 Bronze PSA | Incremental Tables | 8 |
+| 🥈 Silver Raw Vault - Hubs | Incremental Tables | 6 |
+| 🥈 Silver Raw Vault - Links | Incremental Tables | 7 |
+| 🥈 Silver Raw Vault - Satellites | Incremental Tables | 8 |
+| 🥈 Silver Business Vault | Tables | 3 |
+| 🥇 Gold Information Marts - Dimensions | Tables | 4 |
+| 🥇 Gold Information Marts - Facts | Tables | 2 |
+| 🥇 Gold Information Marts - Aggregates | Tables | 2 |
 | **TOTAL** | | **40** |
 
 ## 🎓 Learning Resources

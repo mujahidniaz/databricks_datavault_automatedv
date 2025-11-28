@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='information_marts',
-    tags=['mart', 'supplier', 'performance']
+    schema='gold_information_marts',
+    tags=['gold', 'mart', 'supplier', 'performance']
 ) -}}
 
 -- Supplier performance mart

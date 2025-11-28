@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='business_vault',
-    tags=['business_vault', 'order']
+    schema='silver_business_vault',
+    tags=['silver', 'business_vault', 'order']
 ) -}}
 
 -- Order details with customer information

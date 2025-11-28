@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='information_marts',
-    tags=['dimension', 'customer'],
+    schema='gold_information_marts',
+    tags=['gold', 'dimension', 'customer'],
     post_hook=[
         "ALTER TABLE {{ this }} ALTER COLUMN customer_key SET NOT NULL",
         "ALTER TABLE {{ this }} ADD CONSTRAINT pk_dim_customer PRIMARY KEY(customer_key)"

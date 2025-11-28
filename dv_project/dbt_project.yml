@@ -24,16 +24,18 @@ models:
     +materialized: table
     +file_format: delta
     
+    # 🥉 BRONZE LAYER - PSA (Persistent Staging Area)
     staging:
-      +schema: staging
+      +schema: bronze_psa
       +materialized: incremental
       +on_schema_change: 'append_new_columns'
-      +tags: ['staging', 'psa']
+      +tags: ['bronze', 'psa']
       
+    # 🥈 SILVER LAYER - Raw Vault (Curated Data Vault)
     raw_vault:
-      +schema: raw_vault
+      +schema: silver_raw_vault
       +materialized: incremental
-      +tags: ['raw_vault']
+      +tags: ['silver', 'raw_vault']
       
       hubs:
         +tags: ['hub']
@@ -43,16 +45,18 @@ models:
         
       satellites:
         +tags: ['satellite']
-        
+    
+    # 🥈 SILVER LAYER - Business Vault (Business Logic)
     business_vault:
-      +schema: business_vault
+      +schema: silver_business_vault
       +materialized: table
-      +tags: ['business_vault']
+      +tags: ['silver', 'business_vault']
       
+    # 🥇 GOLD LAYER - Information Marts (Analytics)
     information_marts:
-      +schema: information_marts
+      +schema: gold_information_marts
       +materialized: table
-      +tags: ['mart']
+      +tags: ['gold', 'marts']
 
 # Variable configurations
 vars:

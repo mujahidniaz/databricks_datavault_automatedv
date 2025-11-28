@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='information_marts',
-    tags=['fact', 'lineitem'],
+    schema='gold_information_marts',
+    tags=['gold', 'fact', 'lineitem'],
     post_hook=[
         "ALTER TABLE {{ this }} ALTER COLUMN lineitem_key SET NOT NULL",
         "ALTER TABLE {{ this }} ADD CONSTRAINT pk_fact_lineitem PRIMARY KEY(lineitem_key)",

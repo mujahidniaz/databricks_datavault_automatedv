@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='information_marts',
-    tags=['dimension', 'date'],
+    schema='gold_information_marts',
+    tags=['gold', 'dimension', 'date'],
     post_hook=[
         "ALTER TABLE {{ this }} ALTER COLUMN date_day SET NOT NULL",
         "ALTER TABLE {{ this }} ADD CONSTRAINT pk_dim_date PRIMARY KEY(date_day)"

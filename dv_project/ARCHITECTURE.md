@@ -13,8 +13,8 @@
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│                    STAGING LAYER (Views)                         │
-│           mujahid_data_vault_demo.staging                        │
+│          🥉 BRONZE LAYER - PSA (Incremental Tables)              │
+│          mujahid_data_vault_demo.bronze_psa                      │
 │  ┌───────────────┬────────────┬──────────────┬─────────────┐   │
 │  │ stg_customer  │ stg_orders │ stg_lineitem │ stg_part    │   │
 │  │ stg_supplier  │ stg_nation │ stg_region   │ stg_partsupp│   │
@@ -22,11 +22,12 @@
 │         • Hash Keys (MD5)                                        │
 │         • Load Metadata                                          │
 │         • Business Keys                                          │
+│         • Append-Only / Persistent                               │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│               RAW VAULT LAYER (Incremental Tables)               │
-│           mujahid_data_vault_demo.raw_vault                      │
+│     🥈 SILVER LAYER - RAW VAULT (Incremental Tables)             │
+│         mujahid_data_vault_demo.silver_raw_vault                 │
 │                                                                   │
 │  ┌──────────────── HUBS (Business Keys) ─────────────────┐     │
 │  │  hub_customer │ hub_order │ hub_part │ hub_supplier   │     │
@@ -50,8 +51,8 @@
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│              BUSINESS VAULT LAYER (Tables)                       │
-│         mujahid_data_vault_demo.business_vault                   │
+│      🥈 SILVER LAYER - BUSINESS VAULT (Tables)                   │
+│       mujahid_data_vault_demo.silver_business_vault              │
 │  ┌─────────────────┬──────────────────┬─────────────────────┐  │
 │  │ bv_customer_    │ bv_order_        │ bv_supplier_        │  │
 │  │    details      │    details       │    details          │  │
@@ -62,8 +63,8 @@
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│           INFORMATION MARTS LAYER (Tables)                       │
-│       mujahid_data_vault_demo.information_marts                  │
+│        🥇 GOLD LAYER - INFORMATION MARTS (Tables)                │
+│      mujahid_data_vault_demo.gold_information_marts              │
 │                                                                   │
 │  ┌────────────── DIMENSIONS ──────────────────────────┐         │
 │  │  dim_customer │ dim_supplier │ dim_part │ dim_date │         │
@@ -89,25 +90,25 @@
 
 ## 📊 Data Flow
 
-### 1. Source → Staging
+### 1. Source → Bronze PSA
 - Extract from `samples.tpch`
 - Generate hash keys (MD5)
 - Add load metadata
-- Create as views (no storage)
+- Create as incremental tables (persistent storage)
 
-### 2. Staging → Raw Vault
+### 2. Bronze PSA → Silver Raw Vault
 - **Hubs**: Extract unique business keys
 - **Links**: Capture relationships
 - **Satellites**: Store descriptive attributes
 - Incremental load (insert-only)
 
-### 3. Raw Vault → Business Vault
+### 3. Silver Raw Vault → Silver Business Vault
 - Join Hubs + Links + Satellites
 - Create denormalized views
 - Add business context
 - Current state snapshots
 
-### 4. Business Vault → Information Marts
+### 4. Silver Business Vault → Gold Information Marts
 - **Dimensions**: Entity attributes
 - **Facts**: Metrics and measures
 - **Marts**: Pre-aggregated analytics
@@ -118,14 +119,17 @@
 ```
 Initial Load:
 ┌──────┐    ┌─────────┐    ┌──────────┐    ┌──────────┐    ┌───────┐
-│Source│ -> │ Staging │ -> │Raw Vault │ -> │Business  │ -> │ Marts │
-│      │    │ (View)  │    │(Insert)  │    │  Vault   │    │       │
+│Source│ -> │Bronze   │ -> │Silver    │ -> │Silver    │ -> │ Gold  │
+│      │    │  PSA    │    │Raw Vault │    │Business  │    │ Marts │
+│      │    │(Insert) │    │(Insert)  │    │  Vault   │    │       │
 └──────┘    └─────────┘    └──────────┘    └──────────┘    └───────┘
 
 Incremental Load:
 ┌──────┐    ┌─────────┐    ┌──────────┐    ┌──────────┐    ┌───────┐
-│Source│ -> │ Staging │ -> │Raw Vault │ -> │Business  │ -> │ Marts │
-│(New) │    │ (View)  │    │(Append)  │    │(Refresh) │    │(Refresh)
+│Source│ -> │Bronze   │ -> │Silver    │ -> │Silver    │ -> │ Gold  │
+│(New) │    │  PSA    │    │Raw Vault │    │Business  │    │ Marts │
+│      │    │(Append) │    │(Append)  │    │  Vault   │    │       │
+│      │    │         │    │          │    │(Refresh) │    │(Refresh)
 └──────┘    └─────────┘    └──────────┘    └──────────┘    └───────┘
 ```
 
@@ -148,10 +152,10 @@ Incremental Load:
 - **Source**: Origin of the relationship
 
 ### Materialization
-- **Staging**: Views (computed on-the-fly)
-- **Raw Vault**: Incremental (append-only)
-- **Business Vault**: Tables (full refresh)
-- **Marts**: Tables (full refresh)
+- **Bronze PSA**: Incremental tables (append-only persistent)
+- **Silver Raw Vault**: Incremental tables (append-only)
+- **Silver Business Vault**: Tables (full refresh)
+- **Gold Marts**: Tables (full refresh)
 
 ## 🎯 Entity Relationships
 
@@ -222,11 +226,12 @@ Mart Models (2) ← depends on facts & dimensions
 
 ## 🚀 Performance Optimization
 
-### Staging Layer
-- **Views**: No storage, always fresh data
-- **Pushed down**: Computation happens in Databricks
+### Bronze PSA Layer
+- **Incremental tables**: Persistent storage for reprocessing
+- **Append-only**: Full audit trail
+- **Delta format**: ACID transactions, time travel
 
-### Raw Vault
+### Silver Raw Vault
 - **Incremental**: Only new records inserted
 - **Partitioned**: By LOAD_DATE (configurable)
 - **Delta Format**: ACID transactions, time travel

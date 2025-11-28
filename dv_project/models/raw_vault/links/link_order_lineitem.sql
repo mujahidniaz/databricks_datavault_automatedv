@@ -1,7 +1,7 @@
 {{- config(
     materialized='incremental',
-    schema='raw_vault',
-    tags=['link', 'order', 'lineitem']
+    schema='silver_raw_vault',
+    tags=['silver', 'link', 'order', 'lineitem']
 ) -}}
 
 {%- set source_model = "stg_lineitem" -%}

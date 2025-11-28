@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='business_vault',
-    tags=['business_vault', 'customer']
+    schema='silver_business_vault',
+    tags=['silver', 'business_vault', 'customer']
 ) -}}
 
 -- Customer details with nation and region information

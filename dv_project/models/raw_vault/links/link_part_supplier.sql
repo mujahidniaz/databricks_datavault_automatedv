@@ -1,7 +1,7 @@
 {{- config(
     materialized='incremental',
-    schema='raw_vault',
-    tags=['link', 'part', 'supplier']
+    schema='silver_raw_vault',
+    tags=['silver', 'link', 'part', 'supplier']
 ) -}}
 
 {%- set source_model = "stg_partsupp" -%}

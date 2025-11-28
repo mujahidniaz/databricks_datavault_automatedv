@@ -1,7 +1,7 @@
 {{- config(
     materialized='table',
-    schema='information_marts',
-    tags=['mart', 'sales', 'summary']
+    schema='gold_information_marts',
+    tags=['gold', 'mart', 'sales', 'summary']
 ) -}}
 
 -- Sales summary mart aggregating line items by customer, date, and region

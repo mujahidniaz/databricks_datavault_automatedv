@@ -4,7 +4,7 @@ databricks_dv:
     dev:
       type: databricks
       catalog: mujahid_data_vault_demo
-      schema: staging  # default schema
+      schema: bronze_psa  # default schema (Bronze Layer - PSA)
       host: "{{ env_var('DBT_DATABRICKS_HOST') }}"
       http_path: "{{ env_var('DBT_DATABRICKS_HTTP_PATH') }}"
       token: "{{ env_var('DBT_DATABRICKS_TOKEN') }}"
@@ -13,7 +13,7 @@ databricks_dv:
     prod:
       type: databricks
       catalog: mujahid_data_vault_demo
-      schema: staging
+      schema: bronze_psa
       host: "{{ env_var('DBT_DATABRICKS_HOST') }}"
       http_path: "{{ env_var('DBT_DATABRICKS_HTTP_PATH') }}"
       token: "{{ env_var('DBT_DATABRICKS_TOKEN') }}"
